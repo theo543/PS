@@ -1,7 +1,5 @@
-from math import factorial
+from combinatorics import comb
 
 folders = 10
 found = 3
-
-combinations = factorial(folders) // (factorial(folders - found) * factorial(found))
-print(f"{combinations} combinations")
+print(f"{comb(folders, found)} combinations")
