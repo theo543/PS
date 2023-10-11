@@ -1,14 +1,22 @@
 from combinatorics import comb
 
-new = 13
-old = 7
-buy = 6
 
-combs = [comb(old, o) * comb(new, buy - o) for o in range(1, min(old, buy) + 1)]
-sum_combs = sum(combs)
-prob = [combs[i] / sum_combs for i in range(len(combs))]
+def chances_of_special_amounts(normal, special, choice):
+    combs = [comb(special, i) * comb(normal, choice - i) for i in range(0, min(special, choice) + 1)]
+    if special < choice: combs += [0 for _ in range(choice - special)]
+    sum_combs = sum(combs)
+    prob = [combs[i] / sum_combs for i in range(len(combs))]
+    return (combs, prob)
 
-print(f"p(3 old out of 6) = {prob[3 - 1]:.2}")
+if __name__ == "__main__":
 
-index_max_prob = max(range(len(prob)), key=prob.__getitem__)
-print(f"Most likely is {index_max_prob + 1} old computers with p = {prob[index_max_prob]:.2}")
+    new = 13
+    old = 7
+    buy = 6
+
+    (_combs, prob) = chances_of_special_amounts(new, old, buy)
+
+    print(f"p(3 old out of 6) = {prob[3 - 1]:.2}")
+
+    index_max_prob = max(range(len(prob)), key=prob.__getitem__)
+    print(f"Most likely is {index_max_prob} old computers with p = {prob[index_max_prob]:.2}")
