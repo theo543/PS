@@ -2,6 +2,7 @@ from combinatorics import comb
 
 
 def chances_of_special_amounts(normal, special, choice):
+    assert((normal + special) >= choice)
     combs = [comb(special, i) * comb(normal, choice - i) for i in range(0, min(special, choice) + 1)]
     if special < choice: combs += [0 for _ in range(choice - special)]
     sum_combs = sum(combs)
