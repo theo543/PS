@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Choose number of chords to draw in the simulation:
-num_chords = 20_000
+num_chords = 10_000
 plot_limit = num_chords
 
 def draw_circle_and_triangle(ax):
@@ -68,8 +68,22 @@ def bertrand1():
     return (random_edge(), random_edge())
 
 def random_point_1():
+    """
+    Choose a random point in the circle, uniformly.
+    This is like method 2, but uses sqrt so that we aren't biased away from the center.
+    """
+    dist = np.sqrt(np.random.random())
     rot = np.random.random() * 2 * np.pi
+    x = dist * np.sin(rot)
+    y = dist * np.cos(rot)
+    return (x, y)
+
+def random_point_2():
+    """
+    Choose a radius, then a point on it.
+    """
     dist = np.random.random()
+    rot = np.random.random() * 2 * np.pi
     x = dist * np.sin(rot)
     y = dist * np.cos(rot)
     return (x, y)
@@ -90,7 +104,10 @@ def chord_from_center(center):
 def bertrand2():
     return chord_from_center(random_point_1())
 
-bertrand_methods = {1: bertrand1, 2: bertrand2}
+def bertrand3():
+    return chord_from_center(random_point_2())
+
+bertrand_methods = {1: bertrand1, 2: bertrand2, 3: bertrand3}
 
 method_choice = int(input('Choose method to simulate: '))
 bertrand_simulation(method_choice)
