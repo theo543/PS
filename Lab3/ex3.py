@@ -1,53 +1,37 @@
-import random
-
-def choice():
-    return random.getrandbits(1)
-
-def gen_case():
-    return (choice(), choice())
-
-def log(times_true, times_false):
-        print(f"Times both female: {times_true}, not: {times_false} => {times_true / (times_true + times_false) * 100:.2f}")
-# Cases:
-# M M - rejected
-# M F - no
-# F M - rejected
-# F F - yes
-# p = 1 / 2
-def sim_a():
-    times_true = 0
-    times_false = 0
-
-    while True:
-        case = gen_case()
-        if not case[1]:
-            # reject cases where older isn't female
-            continue
-        if case[0] == True:
-            times_true += 1
-        else:
-            times_false += 1
-        log(times_true, times_false)
+import numpy as np
 
 # Cases:
-# M M - rejected
-# M F - no
-# F M - no
-# F F - yes
-# p = 1 / 3
-def sim_b():
-    times_true = 0
-    times_false = 0
+# M M - 0
+# M F - 1
+# F M - 2
+# F F - 3
 
-    while True:
-        case = gen_case()
-        if not (case[0] or case[1]):
-            # reject cases where neither is female
-            continue
-        if (case[0] and case[1]):
-            times_true += 1
-        else:
-            times_false += 1
-        log(times_true, times_false)
+# 0, 2 rejected
+# 1 no
+# 3 yes
+# expected p = 1/2
+def cases_with_second_is_f(counts):
+    no = counts[1]
+    yes = counts[3]
+    return yes / (no + yes)
 
-            
+# 0 rejected
+# 1, 2 no
+# 3 yes
+# expected p = 1 / 3
+def cases_with_at_least_one_f(counts):
+    no = counts[1] + counts[2]
+    yes = counts[3]
+    return yes / (no + yes)
+
+def sim(n):
+    cases = np.random.randint(1, 4 + 1, size=n)
+    counts = np.bincount(cases)
+    prob_1 = cases_with_second_is_f(counts)
+    prob_2 = cases_with_at_least_one_f(counts)
+    print(f"Result for case 1: {prob_1}")
+    print(f"Result for case 2: {prob_2}")
+
+if __name__ == "__main__":
+    n = int(input("n = "))
+    sim(n)
