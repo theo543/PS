@@ -1,16 +1,38 @@
 import numpy as np
+from mpmath import mp, nstr
+from math import inf
 
-# needs proof
+def exact_formula(n, k):
+    # (n! / (k!(n-k)!) / 2^n
+    f = mp.factorial
+    # arbitrary precision number
+    return (f(n) / (f(k) * f(n - k))) / mp.power(2, n)
+
 def sim(n, k):
     assert(k <= n)
 
-    gen = np.random.default_rng()
     trues = 0
     times = 0
-    while True:
-        times += 1
-        flips = gen.random(n) > 0.5
-        counts = np.bincount(flips, minlength=2)
-        if counts[1] == k:
-            trues += 1
-        print(f"p = {trues}/{times} = {trues/times * 100:.2f}%")
+    def log(end):
+        print(f"p = {trues}/{times} = {trues/times:.10f}", end=end)
+    try:
+        gen = np.random.default_rng()
+        bin_gen_size = 20000000
+        while True:
+            counts = gen.binomial(n, 0.5, bin_gen_size)
+            trues += np.count_nonzero(counts == k)
+            times += bin_gen_size
+            log('\r')
+    except KeyboardInterrupt:
+        log('\n')
+
+if __name__ == "__main__":
+    n = int(input("n = "))
+    k = int(input("k = "))
+    print(f"n = {n}, k = {k}")
+
+    exact_result = exact_formula(n, k)
+    print(f"exact formula => {nstr(exact_result, min_fixed=-50, max_fixed=inf)}")
+
+    print("Simulation:")
+    sim(n, k)
