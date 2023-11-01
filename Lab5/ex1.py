@@ -1,6 +1,8 @@
 import numpy as np
 from fractions import Fraction
 
+from sys import argv
+
 C1_1 = Fraction(6, 10)
 C1_0 = Fraction(7, 10)
 C2_1 = Fraction(8, 10)
@@ -46,6 +48,6 @@ if __name__ == "__main__":
     exact_frac = formula()
     print(f"Formula: {exact_frac} ~= {float(exact_frac) * 100}%")
 
-    n = 10_000
+    n = 10_000 if len(argv) == 1 else int(argv[1])
     (fp, tp) = simulate(n)
     print(f"Simulation: {tp} / ({fp} + {tp}) ~= {tp/(fp+tp) * 100}%")
