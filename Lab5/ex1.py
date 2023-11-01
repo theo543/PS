@@ -5,7 +5,7 @@ C1_1 = Fraction(6, 10)
 C1_0 = Fraction(7, 10)
 C2_1 = Fraction(8, 10)
 C2_0 = Fraction(5, 10)
-BIT_1= Fraction(5, 10)
+BIT_1= Fraction(7, 10)
 
 def formula():
 
@@ -23,12 +23,6 @@ def formula():
     return B_given_A
 
 def simulate(n: int) -> tuple[int, int]:
-    C1_1 = 0.6
-    C1_0 = 0.7
-    C2_1 = 0.8
-    C2_0 = 0.5
-    BIT_1 = 0.5
-
     gen = np.random.default_rng()
 
     def gen_bools(true_p):
@@ -52,5 +46,6 @@ if __name__ == "__main__":
     exact_frac = formula()
     print(f"Formula: {exact_frac} ~= {float(exact_frac) * 100}%")
 
-    (fp, tp) = simulate(10_000)
+    n = 10_000
+    (fp, tp) = simulate(n)
     print(f"Simulation: {tp} / ({fp} + {tp}) ~= {tp/(fp+tp) * 100}%")
