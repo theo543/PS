@@ -1,7 +1,7 @@
 import numpy as np
 from fractions import Fraction
 
-from sys import argv
+import argparse as argp
 
 def formula(n: int) -> Fraction:
     return Fraction(-1)
@@ -35,11 +35,15 @@ def simulate(n: int, batches: int) -> int:
     return count_any_three_repeats
 
 if __name__ == "__main__":
-    n = 3 if len(argv) == 1 else int(argv[1])
+    ap = argp.ArgumentParser()
+    ap.add_argument("-n", default=3, type=int)
+    ap.add_argument("-b", "--batches", default=10_000, type=int)
+    args = ap.parse_args()
+
+    print(f"Chance of {args.n} random bits containing 111:")
 
     #exact_frac = formula(n)
     #print(f"Formula: {exact_frac} ~= {float(exact_frac) * 100}%")
 
-    BATCHES = 3
-    events = simulate(n, 10_000)
-    print(f"Simulation: {events} / {BATCHES} ~= {(events / BATCHES) * 100}%")
+    events = simulate(args.n, args.batches)
+    print(f"Simulation: {events} / {args.batches} ~= {(events / args.batches) * 100}%")
