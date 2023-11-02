@@ -3,8 +3,19 @@ from fractions import Fraction
 
 import argparse as argp
 
+import itertools
+
+def list_has_3(l) -> bool:
+    # temporary for testing if simulation is right
+    # REPLACE LATER
+    for i in range(0, len(l) - 2):
+        if all(l[i:(i+3)]):
+            return True
+    return False
+
 def formula(n: int) -> Fraction:
-    return Fraction(-1)
+    lst = map(list_has_3, itertools.product([0, 1], repeat=n))
+    return Fraction(sum(lst), 2**n)
 
 def simulate(n: int, batches: int) -> int:
     if n < 3: return 0
@@ -32,8 +43,8 @@ if __name__ == "__main__":
 
     print(f"Chance of {args.n} random bits containing 111:")
 
-    #exact_frac = formula(n)
-    #print(f"Formula: {exact_frac} ~= {float(exact_frac) * 100}%")
+    exact_frac = formula(args.n)
+    print(f"Formula: {exact_frac} ~= {float(exact_frac) * 100}%")
 
     events = simulate(args.n, args.batches)
     print(f"Simulation: {events} / {args.batches} ~= {(events / args.batches) * 100}%")
