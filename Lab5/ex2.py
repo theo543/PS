@@ -2,7 +2,6 @@ import numpy as np
 from fractions import Fraction
 import argparse as argp
 from itertools import product
-from functools import cache
 
 def bruteforce(n: int) -> Fraction:
     def list_has_triple_ones(l) -> bool:
@@ -14,17 +13,17 @@ def bruteforce(n: int) -> Fraction:
     comb_has_triple_ones = map(list_has_triple_ones, combinations)
     return Fraction(sum(comb_has_triple_ones), 2**n)
 
-# TODO: has O(n) space, can be O(1)
-@cache
 def formula(n: int) -> Fraction:
     if n < 3: return Fraction(0)
-    if n == 3: return Fraction(1, 8)
-    # P(n) = P(n - 1) + (1 - P(n - 4)) / 16
-    # either there were already three ones, or there weren't, but it ended with 011, and the last digit was one
-    already_was_true = formula(n - 1)
-    could_become_true_now = (1 - formula(n - 4)) / 8
-    became_true = could_become_true_now / 2
-    return already_was_true + became_true
+    probs = [Fraction(0), Fraction(0), Fraction(0), Fraction(1, 8)]
+    for _ in range(4, n + 1):
+        # P(n) = P(n - 1) + (1 - P(n - 4)) / 16
+        # either there were already three ones, or there weren't, but it ended with 011, and the last digit was one
+        already_was_true = probs[3]
+        could_become_true_now = (1 - probs[0]) / 8
+        became_true = could_become_true_now / 2
+        probs = [probs[1], probs[2], probs[3], already_was_true + became_true]
+    return probs[3]
 
 def simulate(n: int, batches: int) -> Fraction:
 
