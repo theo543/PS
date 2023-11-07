@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 
 # Cases:
 # M M - 0
@@ -33,5 +34,7 @@ def sim(n):
     print(f"Result for case 2: {prob_2}")
 
 if __name__ == "__main__":
-    n = int(input("n = "))
-    sim(n)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("n", type=int)
+    args = ap.parse_args()
+    sim(args.n)
