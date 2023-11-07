@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import argparse
 
 def sim(n, a, b):
     rand = np.random.uniform(0, 1, size=n)
@@ -13,7 +14,10 @@ def sim(n, a, b):
     plt.show(block=True,)
 
 if __name__ == "__main__":
-    n = int(input("n = "))
-    a = float(input("a = "))
-    b = float(input("b = "))
-    sim(n, a, b)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("n", type=int)
+    ap.add_argument("a", type=float)
+    ap.add_argument("b", type=float)
+    args = ap.parse_args()
+    assert(0 <= args.a < args.b <= 1)
+    sim(args.n, args.a, args.b)
