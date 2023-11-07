@@ -10,4 +10,4 @@ Team 2:
 * Ex 1 => Lab3/ex3.py
 * Ex 2 => Lab3/ex4.py
 * Ex 3 => Lab4/ex2.py
-* Ex 4 => written
+* Ex 4 => hw_02_ex4.py
