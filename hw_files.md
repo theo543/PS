@@ -14,4 +14,4 @@ Tema 2:
 
 Tema 3:
 
-* 
+* Lab5/ex2.py
