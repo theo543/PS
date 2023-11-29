@@ -28,7 +28,7 @@ def update_after_negative(D_plus: Fraction) -> Fraction:
 
 def main():
     def print_frac(name: str, frac: Fraction):
-        print(f"{name}: {frac} ~= {float(frac) * 10:.10f}")
+        print(f"{name}: {frac} ~= {float(frac) * 100:.10f}%")
 
     p_plus_minus = update_after_negative(update_after_positive(initial_prior_probability))
     print_frac("Positive test then negative test", p_plus_minus) # 490/474721 ~= 0.0103218522
