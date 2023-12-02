@@ -1,0 +1,8 @@
+You have two dice: one regular 6-sided die
+(numbered 1 to 6) and one 4-sided die
+(numbered 1 to 4). You randomly select
+one of the two dice and you roll it twice. If
+your first roll was a 2, what is the
+expected value of your second roll? You're
+allowed to use pen and paper (no
+calculator). Please explain your reasoning.
