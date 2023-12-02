@@ -1,11 +1,18 @@
 import numpy as np
+import argparse
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-b", "--batches", default=10_000_000, type=int)
+    ap.add_argument("--required-roll", default=2, type=int)
+    args = ap.parse_args()
+
     gen = np.random.default_rng()
-    np_batch_size = 10_000_000
+    np_batch_size = args.batches
 
     sum = 0
     count = 0
+    required_roll = args.required_roll
 
     def display_results():
         if count == 0:
@@ -34,18 +41,21 @@ def main():
         r4 += r6
         return r4
 
-    while True:
-        display_results()
+    try:
+        while True:
+            display_results()
 
-        bools = rand_bools()
-        r1 = roll_interleaved(bools)
-        r2 = roll_interleaved(bools)
+            bools = rand_bools()
+            r1 = roll_interleaved(bools)
+            r2 = roll_interleaved(bools)
 
-        has_r1_equal_2 = r1 == 2
-        valid_rolls = r2[has_r1_equal_2]
+            has_r1_equal_2 = r1 == required_roll
+            valid_rolls = r2[has_r1_equal_2]
 
-        sum += valid_rolls.sum()
-        count += has_r1_equal_2.sum()
+            sum += valid_rolls.sum()
+            count += has_r1_equal_2.sum()
+    except KeyboardInterrupt:
+        print("Goodbye!")
 
 if __name__ == "__main__":
     main()
