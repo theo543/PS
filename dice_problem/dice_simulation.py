@@ -7,11 +7,6 @@ def main():
     sum = 0
     count = 0
 
-    dice = np.array([4, 6])
-
-    def roll(max_val):
-        return gen.integers(low=np.repeat([1], np_batch_size), high=max_val+1, size=np_batch_size)
-
     def display_results():
         if count == 0:
             msg = "No data yet..."
@@ -19,17 +14,36 @@ def main():
             msg = f"{sum}/{count} = {sum/count}"
         print(msg)
 
+    def rand_bools():
+        bools = np.empty((2, np_batch_size), dtype=np.int64)
+        bools[0, :] = gen.integers(0, 1 + 1, size=np_batch_size)
+        bools[1, :] = 1 - bools[0, :]
+        return bools
+
+    def roll_4():
+        return gen.integers(1, 4 + 1, size=np_batch_size, dtype=np.int64)
+
+    def roll_6():
+        return gen.integers(1, 6 + 1, size=np_batch_size, dtype=np.int64)
+
+    def roll_interleaved(bools):
+        r4 = roll_4()
+        r6 = roll_6()
+        r4 *= bools[0, :]
+        r6 *= bools[1, :]
+        r4 += r6
+        return r4
+
     while True:
         display_results()
 
-        choice = dice[gen.integers(0, len(dice), size=np_batch_size)]
-
-        r1 = roll(choice)
-        r2 = roll(choice)
+        bools = rand_bools()
+        r1 = roll_interleaved(bools)
+        r2 = roll_interleaved(bools)
 
         has_r1_equal_2 = r1 == 2
         valid_rolls = r2[has_r1_equal_2]
-        
+
         sum += valid_rolls.sum()
         count += has_r1_equal_2.sum()
 
