@@ -15,3 +15,10 @@ Tema 2:
 Tema 3:
 
 * Lab5/ex2.py
+
+Tema 4:
+
+* Ex 1 => paper
+* Ex 2 => paper
+* Ex 3 => hw_04_ex3.py
+* Ex 4 => hw_04_ex4.py
