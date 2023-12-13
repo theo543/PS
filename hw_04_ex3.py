@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.special import gammaln
+from scipy.special import gammaln, comb
 from matplotlib import pyplot as plt
 from argparse import ArgumentParser
 from time import time
@@ -43,10 +43,18 @@ def poisson_mass(λ: float, start: int, stop: int):
     np.exp(Y, out=Y)
     return (X, Y)
 
+def binomial_mass(n: int, p: float, min_val: int, max_val: int):
+    X = np.arange(min_val, max_val + 1, 1)
+    Y = comb(n, X)
+    Y *= np.power(p, X)
+    Y *= np.power(1 - p, n - X)
+    return (X, Y)
+
 def main():
     ap = ArgumentParser()
     ap.add_argument("--lambda", type=float, required=True, dest='λ')
     ap.add_argument("--batches", type=int, default=1_000_000)
+    ap.add_argument("--binomial-n", type=int, default=None)
     args = ap.parse_args()
 
     start_time = time()
@@ -63,6 +71,13 @@ def main():
     end_time = time()
     print(f'Time taken to run poisson_mass: {end_time - start_time} seconds')
     plt.step(X, Y)
+
+    if not (args.binomial_n is None):
+        start_time = time()
+        (X, Y) = binomial_mass(args.binomial_n, args.λ/args.binomial_n, min_val, max_val)
+        end_time = time()
+        print(f'Time taken to run binomial_mass: {end_time - start_time} seconds')
+        plt.step(X, Y)
 
     plt.show()
 if __name__ == "__main__":
