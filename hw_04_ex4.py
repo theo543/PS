@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import comb
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
 from os.path import basename
@@ -7,12 +8,12 @@ from sys import argv
 def hypergeom_values(N: int, K: int, n: int, batches: int):
     gen = np.random.default_rng()
 
-    deck = np.zeros((1, N), dtype=np.bool_)
-    deck[0, :K] = True
-    deck = np.repeat(deck, batches, axis=0)
-    gen.permuted(deck, axis=1, out=deck)
-    drawn = deck[:, :n]
-    values = np.count_nonzero(drawn, axis=1)
+    k = np.arange(0, N+1, 1)
+    pmf = comb(K, k) * comb(N - K, n - k) / comb(N, n)
+    assert(1.001 > pmf.sum() > 0.999)
+    cdf = np.cumsum(pmf)
+    probs = gen.random(batches)
+    values = np.digitize(probs, cdf)
 
     return values
 
