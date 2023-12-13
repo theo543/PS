@@ -1,6 +1,8 @@
 import numpy as np
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
+from os.path import basename
+from sys import argv
 
 def hypergeom_values(N: int, K: int, n: int, batches: int):
     gen = np.random.default_rng()
@@ -29,11 +31,13 @@ def main():
 
     vals = hypergeom_values(args.N, args.K, args.n, args.batches)
     bins = list(range(0, args.n))
-    plt.hist(vals, bins=bins, density=True)
+    plt.hist(vals, bins=bins, density=True, label='Hypergeometric Histogram')
 
     (X, Y) = hypergeom_mass(args.N, args.K, args.n, np.min(vals), np.max(vals))
-    plt.step(X, Y, where='post')
+    plt.step(X, Y, where='post', label='Hypergeometric PMF')
 
+    plt.title(' '.join([basename(argv[0])] + argv[1:]))
+    plt.legend(loc='upper left')
     plt.show()
 
 if __name__ == "__main__":

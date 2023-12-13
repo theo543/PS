@@ -3,6 +3,8 @@ from scipy.special import gammaln, comb
 from matplotlib import pyplot as plt
 from argparse import ArgumentParser
 from time import time
+from sys import argv
+from os.path import basename
 
 def poisson_values(λ: float, batches: int):
     gen = np.random.default_rng()
@@ -64,21 +66,23 @@ def main():
 
     min_val = int(np.min(vals))
     max_val = int(np.max(vals))                  
-    plt.hist(vals, bins=range(min_val, max_val), density=True)
+    plt.hist(vals, bins=range(min_val, max_val), density=True, label='Poisson Histogram')
 
     start_time = time()
     (X, Y) = poisson_mass(args.λ, min_val, max_val)
     end_time = time()
     print(f'Time taken to run poisson_mass: {end_time - start_time} seconds')
-    plt.step(X, Y)
+    plt.step(X, Y, label='Poisson PMF')
 
     if not (args.binomial_n is None):
         start_time = time()
         (X, Y) = binomial_mass(args.binomial_n, args.λ/args.binomial_n, min_val, max_val)
         end_time = time()
         print(f'Time taken to run binomial_mass: {end_time - start_time} seconds')
-        plt.step(X, Y)
+        plt.step(X, Y, label='Binomial PMF')
 
+    plt.legend(loc='upper right')
+    plt.title(' '.join([basename(argv[0])] + argv[1:]))
     plt.show()
 if __name__ == "__main__":
     main()
