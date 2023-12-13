@@ -1,16 +1,16 @@
 import numpy as np
-from scipy.special import factorial, gammaln
+from scipy.special import gammaln
 from matplotlib import pyplot as plt
 from argparse import ArgumentParser
+from time import time
 
 def poisson_values(λ: float, batches: int):
     gen = np.random.default_rng()
 
-    # Poisson <=> generate add exponentials until > λ
-    # log everything
-    limit = np.exp(-λ)
+    # Generate values from uniform [0, 1] distribution until their product <= -λ
+    # Do the multiplication in a logarithm to avoid underflow
     counts = np.zeros(batches)
-    products = gen.random(batches)
+    sums = np.log(gen.random(batches))
     final_counts = np.empty(batches)
     left = batches
     buf_multiply = np.empty(batches)
@@ -18,20 +18,21 @@ def poisson_values(λ: float, batches: int):
     while left:
         tmp = buf_multiply[:left]
         gen.random(left, out=tmp)
-        products *= tmp
+        np.log(tmp, out=tmp)
+        sums += tmp
         done = buf_done.view()[:left]
-        np.less_equal(products, limit, out=done)
-        nr_done = np.count_nonzero(done)
-        final_counts[batches - left:batches - left + nr_done] = counts[done]
-        np.bitwise_not(done, out=done)
-        remaining = done # reuse buffer
-        left -= nr_done
-        counts[:left] = counts[remaining]
-        counts = counts.view()[:left]
+        np.less_equal(sums, -λ, out=done)
+        if np.any(done):
+            nr_done = np.count_nonzero(done)
+            final_counts[batches - left:batches - left + nr_done] = counts[done]
+            np.bitwise_not(done, out=done)
+            remaining = done # reuse buffer
+            left -= nr_done
+            counts[:left] = counts[remaining]
+            counts = counts.view()[:left]
+            sums[:left] = sums[remaining]
+            sums = sums.view()[:left]
         counts += 1
-        products[:left] = products[remaining]
-        products = products.view()[:left]
-    assert(np.size(final_counts) == batches)
     return final_counts
 
 def poisson_mass(λ: float, start: int, stop: int):
@@ -48,15 +49,21 @@ def main():
     ap.add_argument("--batches", type=int, default=1_000_000)
     args = ap.parse_args()
 
+    start_time = time()
     vals = poisson_values(args.λ, args.batches)
+    end_time = time()
+    print(f'Time taken to run poisson_values: {end_time - start_time} seconds')
+
     min_val = int(np.min(vals))
     max_val = int(np.max(vals))                  
     plt.hist(vals, bins=range(min_val, max_val), density=True)
 
+    start_time = time()
     (X, Y) = poisson_mass(args.λ, min_val, max_val)
+    end_time = time()
+    print(f'Time taken to run poisson_mass: {end_time - start_time} seconds')
     plt.step(X, Y)
 
     plt.show()
-
 if __name__ == "__main__":
     main()
