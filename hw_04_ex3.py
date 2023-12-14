@@ -6,6 +6,20 @@ from time import time
 from sys import argv
 from os.path import basename
 
+@profile
+def poisson_move_vals(done, counts, sums, batches, left, final_counts):
+    nr_done = np.count_nonzero(done)
+    final_counts[batches - left:batches - left + nr_done] = counts[done]
+    np.bitwise_not(done, out=done)
+    remaining = done # reuse buffer
+    left -= nr_done
+    counts[:left] = counts[remaining]
+    counts = counts.view()[:left]
+    sums[:left] = sums[remaining]
+    sums = sums.view()[:left]
+    return done, counts, sums, left, final_counts
+
+@profile
 def poisson_values(λ: float, batches: int):
     gen = np.random.default_rng()
 
@@ -25,18 +39,11 @@ def poisson_values(λ: float, batches: int):
         done = buf_done.view()[:left]
         np.less_equal(sums, -λ, out=done)
         if np.any(done):
-            nr_done = np.count_nonzero(done)
-            final_counts[batches - left:batches - left + nr_done] = counts[done]
-            np.bitwise_not(done, out=done)
-            remaining = done # reuse buffer
-            left -= nr_done
-            counts[:left] = counts[remaining]
-            counts = counts.view()[:left]
-            sums[:left] = sums[remaining]
-            sums = sums.view()[:left]
+            done, counts, sums, left, final_counts = poisson_move_vals(done, counts, sums, batches, left, final_counts)
         counts += 1
     return final_counts
 
+@profile
 def poisson_mass(λ: float, start: int, stop: int):
     X = np.arange(start, stop + 1, 1)
     Y = X * np.log(λ)
@@ -45,6 +52,7 @@ def poisson_mass(λ: float, start: int, stop: int):
     np.exp(Y, out=Y)
     return (X, Y)
 
+@profile
 def binomial_mass(n: int, p: float, min_val: int, max_val: int):
     X = np.arange(min_val, max_val + 1, 1)
     Y = comb(n, X)
