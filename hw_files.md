@@ -22,3 +22,10 @@ Tema 4:
 * Ex 2 => paper
 * Ex 3 => hw_04_ex3.py
 * Ex 4 => hw_04_ex4.py
+
+Tema 5:
+
+* Ex 1 => hw_05_ex1.py
+* Ex 2 => paper
+* Ex 3 => paper
+* Ex 4 => paper
