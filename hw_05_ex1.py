@@ -35,18 +35,19 @@ def standard_normal_density(points: int, start: int, stop: int):
 
 def main():
     ap = ArgumentParser()
-    ap.add_argument("--batches", type=int, default=30_000_000)
+    ap.add_argument("--batches", type=int, default=50_000_000)
     ap.add_argument("--hist-bins", type=int, default=1_000)
     ap.add_argument("--density-points", type=int, default=1_000)
     args = ap.parse_args()
 
     values = standard_normal_values(args.batches)
 
-    plt.hist(values, args.hist_bins, density=True)
+    plt.hist(values, args.hist_bins, density=True, label="Standard Normal Histogram")
 
     (density_x, density_y) = standard_normal_density(args.density_points, np.min(values), np.max(values))
     assert abs(np.trapz(density_y, x=density_x) - 1) <= 0.0001
-    plt.plot(density_x, density_y)
+    plt.plot(density_x, density_y, label="Standard Normal PDF")
+    plt.legend()
 
     plt.show()
 
